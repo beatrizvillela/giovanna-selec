@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Seleção de Fotos</title>
+
+<style>
+body {
+    background: #0c4734;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.foto {
+    position: relative;
+    border-radius: 6px;
+}
+
+.foto img {
+    width: 100%;
+    border-radius: 6px;
+    display: block;
+}
+
+.btn-selecionar {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(255,255,255,0.9);
+    color: #000;
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-selecionar.ativa {
+    background: #00ff88;
+    font-weight: bold;
+}
+
+#resultado {
+    width: 100%;
+    height: 80px;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 20px;
+    background: #ffffff;
+    color: #000;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.creditos {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>
+Clique e selecione as suas favoritas.<br>
+Ao final, copie e me envie os números.
+</h2>
+
+<div class="grid" id="galeria"></div>
+
+<textarea id="resultado" placeholder="As fotos selecionadas aparecerão aqui"></textarea>
+<button onclick="copiar()">Copiar números selecionados</button>
+
+<div class="creditos">
+Fotos e site por @beatrizvillelafoto
+</div>
+
+<script>
+let selecionadas = [];
+
+const totalFotos = 105;
+const fotosPorLote = 105;
+let fotoAtual = 1;
+
+function carregarGaleria() {
+    const galeria = document.getElementById("galeria");
+
+    for (let i = 0; i < fotosPorLote && fotoAtual <= totalFotos; i++) {
+
+        const numeroFoto = fotoAtual;
+        fotoAtual++;
+
+        const div = document.createElement("div");
+        div.className = "foto";
+
+        const img = document.createElement("img");
+        img.src = `fotos/img-${numeroFoto}.jpg`;
+        img.alt = `Foto ${numeroFoto}`;
+        img.loading = "lazy";
+
+        const btn = document.createElement("button");
+        btn.className = "btn-selecionar";
+        btn.textContent = "Selecionar";
+
+        btn.onclick = () => {
+            if (selecionadas.includes(numeroFoto)) {
+                selecionadas = selecionadas.filter(n => n !== numeroFoto);
+                btn.classList.remove("ativa");
+                btn.textContent = "Selecionar";
+            } else {
+                selecionadas.push(numeroFoto);
+                btn.classList.add("ativa");
+                btn.textContent = "Selecionada";
+            }
+            document.getElementById("resultado").value = selecionadas.join(", ");
+        };
+
+        div.appendChild(img);
+        div.appendChild(btn);
+        galeria.appendChild(div);
+    }
+}
+
+function copiar() {
+    const texto = document.getElementById("resultado");
+    texto.select();
+    document.execCommand("copy");
+    alert("Números copiados!");
+}
+
+carregarGaleria();
+
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        carregarGaleria();
+    }
+});
+</script>
+
+</body>
+</html>
